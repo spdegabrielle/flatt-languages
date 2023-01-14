@@ -92,7 +92,7 @@
 
 (define-place desert
   "You're in a desert. There is nothing for miles around."
-  [cactus key
+  [cactus key]
   ([north meadow]
    [south desert]
    [east desert]
