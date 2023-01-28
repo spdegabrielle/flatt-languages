@@ -68,20 +68,20 @@
     (define s (read-name src in))
     (define is-trans?
       (cond
-       [(regexp-match-peek #rx"^ _" in)
-        (if (or (eq? transitive 'unknown)
-                (eq? transitive #t))
-            (begin
-              (read-char in)
-              (read-char in)
-              #t)
-            (begin
-              (read-char in)
-              (complain src in "unexpected underscore")))]
-       [else
-        (if (eq? transitive #t)
-            (complain src in "inconsistent transitivity")
-            #f)]))
+        [(regexp-match-peek #rx"^ _" in)
+         (if (or (eq? transitive 'unknown)
+                 (eq? transitive #t))
+             (begin
+               (read-char in)
+               (read-char in)
+               #t)
+             (begin
+               (read-char in)
+               (complain src in "unexpected underscore")))]
+        [else
+         (if (eq? transitive #t)
+             (complain src in "inconsistent transitivity")
+             #f)]))
     (if (regexp-match-peek #rx"^, " in)
         (begin
           (read-char in)

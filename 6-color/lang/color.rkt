@@ -163,9 +163,9 @@
             (if (eq? mode 'error) 'error type)
             data new-token-start new-token-end 0 
             (cond
-             [(list? mode) (cons self mode)]
-             [(eq? mode 'error) errors]
-             [else next]))))
+              [(list? mode) (cons self mode)]
+              [(eq? mode 'error) errors]
+              [else next]))))
 
 (define (next-mode mode type data status)
   (case type 
@@ -189,8 +189,8 @@
 
 (define (color-lexer in offset mode)
   (cond
-   [(not mode) (start in)]
-   [(pair? mode)
-    ((car mode) in (cdr mode))]
-   [else
-    (mode in)]))
+    [(not mode) (start in)]
+    [(pair? mode)
+     ((car mode) in (cdr mode))]
+    [else
+     (mode in)]))
