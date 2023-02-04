@@ -5,7 +5,7 @@
 
 (provide color-lexer)
 
-(define-lex-abbrevs 
+(define-lex-abbrevs
   [id (:: (:/ #\A #\Z #\a #\z) (:* (:or (:/ #\A #\Z #\a #\z #\0 #\9) #\-)))]
 
   [digit8 (:/ "0" "7")]
@@ -13,7 +13,7 @@
 
   [unicode  (:or (:: "u" (:** 1 4 digit16))
                  (:: "U" (:** 1 6 digit16)))]
-   
+
   [str (:: "\"" (:* string-element (:: "\\" unicode)) "\"")]
   [string-element (:or (:~ "\"" "\\")
                        "\\\""
@@ -34,15 +34,15 @@
 (define errors
   (lexer
    [any-char
-    (values lexeme 'error #f (position-offset start-pos) (position-offset end-pos) 
+    (values lexeme 'error #f (position-offset start-pos) (position-offset end-pos)
             1 (list inc-errors 1))]
    [(eof)
     (values lexeme 'eof #f #f #f 0 #f)]))
 
 (define (inc-errors in back)
-  (define-values (lexeme type data new-token-start new-token-end backup mode) 
+  (define-values (lexeme type data new-token-start new-token-end backup mode)
     (errors in))
-  (values lexeme type data new-token-start new-token-end 
+  (values lexeme type data new-token-start new-token-end
           (+ 1 (car back))
           (list inc-errors (+ 1 (car back)))))
 
@@ -156,19 +156,19 @@
   (action in mode place-action place-operations))
 
 (define (action in mode self next)
-  (define-values (lexeme type data new-token-start new-token-end status) 
+  (define-values (lexeme type data new-token-start new-token-end status)
     (scheme-lexer/status in))
   (let ([mode (next-mode mode type data status)])
-    (values lexeme 
+    (values lexeme
             (if (eq? mode 'error) 'error type)
-            data new-token-start new-token-end 0 
+            data new-token-start new-token-end 0
             (cond
               [(list? mode) (cons self mode)]
               [(eq? mode 'error) errors]
               [else next]))))
 
 (define (next-mode mode type data status)
-  (case type 
+  (case type
     [(parenthesis)
      (case data
        [(|(|) (cons '|)| mode)]

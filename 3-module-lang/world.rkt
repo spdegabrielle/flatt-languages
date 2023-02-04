@@ -11,7 +11,7 @@
   [up (=) "go up"]
   [down (=) "go down"]
   [in (= enter) "enter"]
-  [out (= leave) "leave"]  
+  [out (= leave) "leave"]
   [get _ (= grab take) "take"]
   [put _ (= drop leave) "drop"]
   [open _ (= unlock) "open"]

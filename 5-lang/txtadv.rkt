@@ -4,7 +4,7 @@
          define-thing
          define-place
          define-everywhere
-         
+
          show-current-place
          show-inventory
          save-game
@@ -16,7 +16,7 @@
          drop-thing!
          thing-state
          set-thing-state!
-          
+
          (except-out (all-from-out racket) #%module-begin)
          (rename-out [module-begin #%module-begin]))
 
@@ -65,8 +65,8 @@
 ;; ============================================================
 ;; Simple type layer:
 
-(begin-for-syntax 
-  (struct typed (id type) 
+(begin-for-syntax
+  (struct typed (id type)
     #:property prop:procedure (lambda (self stx) (typed-id self))
     #:omit-define-syntaxes))
 
@@ -108,26 +108,26 @@
     [(define-one-verb id _)
      (define-one-verb id _ (=) (symbol->string 'id))]))
 
-(define-syntax-rule (define-thing id 
+(define-syntax-rule (define-thing id
                       [vrb expr] ...)
   (begin
-    (define gen-id 
+    (define gen-id
       (thing 'id #f (list (cons (check-type vrb "transitive verb")
                                 (lambda () expr)) ...)))
     (define-syntax id (typed #'gen-id "thing"))
     (record-element! 'id id)))
 
 
-(define-syntax-rule (define-place id 
-                      desc 
-                      (thng ...) 
+(define-syntax-rule (define-place id
+                      desc
+                      (thng ...)
                       ([vrb expr] ...))
   (begin
-    (define gen-id 
+    (define gen-id
       (place desc
              (list (check-type thng "thing") ...)
              (list (cons (check-type vrb "intransitive verb")
-                         (lambda () expr)) 
+                         (lambda () expr))
                    ...)))
     (define-syntax id (typed #'gen-id "place"))
     (record-element! 'id id)))
@@ -135,7 +135,7 @@
 
 (define-syntax-rule (define-everywhere id ([vrb expr] ...))
   (define id (list (cons (check-type vrb "intransitive verb")
-                         (lambda () expr)) 
+                         (lambda () expr))
                    ...)))
 
 ;; ============================================================
@@ -154,10 +154,10 @@
 ;; Fuctions to be used by verb responses:
 (define (have-thing? t)
   (memq t stuff))
-(define (take-thing! t) 
+(define (take-thing! t)
   (set-place-things! current-place (remq t (place-things current-place)))
   (set! stuff (cons t stuff)))
-(define (drop-thing! t) 
+(define (drop-thing! t)
   (set-place-things! current-place (cons t (place-things current-place)))
   (set! stuff (remq t stuff)))
 
@@ -213,10 +213,10 @@
   (or
    (find-verb vrb (place-actions current-place))
    (find-verb vrb everywhere-actions)
-   (using-verb 
+   (using-verb
     vrb all-verbs
     (lambda (verb)
-      (lambda () 
+      (lambda ()
         (if (verb-transitive? verb)
             (format "~a what?" (string-titlecase (verb-desc verb)))
             (format "Can't ~a here." (verb-desc verb))))))
@@ -225,10 +225,10 @@
 
 ;; Handle a transitive-verb command:
 (define (handle-transitive-verb vrb obj)
-  (or (using-verb 
+  (or (using-verb
        vrb all-verbs
        (lambda (verb)
-         (and 
+         (and
           (verb-transitive? verb)
           (cond
             [(ormap (lambda (thing)
@@ -243,7 +243,7 @@
                                 (verb-desc verb) obj))))]
             [else
              (lambda ()
-               (format "There's no ~a here to ~a." obj 
+               (format "There's no ~a here to ~a." obj
                        (verb-desc verb)))]))))
       (lambda ()
         (format "I don't know how to ~a ~a." vrb obj))))

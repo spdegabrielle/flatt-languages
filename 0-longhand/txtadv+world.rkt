@@ -30,7 +30,7 @@
 
 ;; Verbs ----------------------------------------
 ;; Declare all the verbs that can be used in the game.
-;; Each verb has a canonical name, a set of aliases, 
+;; Each verb has a canonical name, a set of aliases,
 ;; a printed form, and a boolean indincating whether it
 ;; is transitive.
 
@@ -112,8 +112,8 @@
 ;; Each thing handles a set of transitive verbs.
 
 (define cactus
-  (thing 'cactus 
-         #f 
+  (thing 'cactus
+         #f
          (list (cons get (lambda () "Ouch!")))))
 (record-element! 'cactus cactus)
 
@@ -121,19 +121,19 @@
   (thing 'door
          #f
          (list
-          (cons open 
+          (cons open
                 (lambda ()
                   (if (have-thing? key)
                       (begin
                         (set-thing-state! door 'open)
                         "The door is now unlocked and open.")
                       "The door is locked.")))
-          (cons close 
+          (cons close
                 (lambda ()
                   (begin
                     (set-thing-state! door #f)
                     "The door is now closed.")))
-          (cons knock 
+          (cons knock
                 (lambda ()
                   "No one is home.")))))
 (record-element! 'door door)
@@ -142,14 +142,14 @@
   (thing 'key
          #f
          (list
-          (cons get 
+          (cons get
                 (lambda ()
                   (if (have-thing? key)
                       "You already have the key."
                       (begin
                         (take-thing! key)
                         "You now have the key."))))
-          (cons put 
+          (cons put
                 (lambda ()
                   (if (have-thing? key)
                       (begin
@@ -162,7 +162,7 @@
   (thing 'trophy
          #f
          (list
-          (cons get 
+          (cons get
                 (lambda ()
                   (begin
                     (take-thing! trophy)
@@ -177,9 +177,9 @@
    "You're standing in a meadow. There is a house to the north."
    (list)
    (list
-    (cons north 
+    (cons north
           (lambda () house-front))
-    (cons south 
+    (cons south
           (lambda () desert)))))
 (record-element! 'meadow meadow)
 
@@ -188,7 +188,7 @@
    "You are standing in front of a house."
    (list door)
    (list
-    (cons in 
+    (cons in
           (lambda ()
             (if (eq? (thing-state door) 'open)
                 room
@@ -226,10 +226,10 @@
 ;; Fuctions to be used by verb responses:
 (define (have-thing? t)
   (memq t stuff))
-(define (take-thing! t) 
+(define (take-thing! t)
   (set-place-things! current-place (remq t (place-things current-place)))
   (set! stuff (cons t stuff)))
-(define (drop-thing! t) 
+(define (drop-thing! t)
   (set-place-things! current-place (cons t (place-things current-place)))
   (set! stuff (remq t stuff)))
 
@@ -285,10 +285,10 @@
   (or
    (find-verb cmd (place-actions current-place))
    (find-verb cmd everywhere-actions)
-   (using-verb 
+   (using-verb
     cmd all-verbs
     (lambda (verb)
-      (lambda () 
+      (lambda ()
         (if (verb-transitive? verb)
             (format "~a what?" (string-titlecase (verb-desc verb)))
             (format "Can't ~a here." (verb-desc verb))))))
@@ -297,10 +297,10 @@
 
 ;; Handle a transitive-verb command:
 (define (handle-transitive-verb cmd obj)
-  (or (using-verb 
+  (or (using-verb
        cmd all-verbs
        (lambda (verb)
-         (and 
+         (and
           (verb-transitive? verb)
           (cond
             [(ormap (lambda (thing)
@@ -315,7 +315,7 @@
                                 (verb-desc verb) obj))))]
             [else
              (lambda ()
-               (format "There's no ~a here to ~a." obj 
+               (format "There's no ~a here to ~a." obj
                        (verb-desc verb)))]))))
       (lambda ()
         (format "I don't know how to ~a ~a." cmd obj))))

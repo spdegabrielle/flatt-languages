@@ -33,7 +33,7 @@
 
 (define (skip-whitespace in)
   (regexp-try-match #px"^\\s+" in))
-      
+
 (define (expect-section src in name)
   (skip-whitespace in)
   (unless (regexp-match-peek (pregexp (format "^===~a===\\s" name))
@@ -98,7 +98,7 @@
     (if (regexp-match-peek #rx"^\"" in)
         (read-syntax src in)
         (symbol->string (syntax-e (car names)))))
-  `[,(car names) 
+  `[,(car names)
     ,@(if is-transitive? '(_) '())
     (= ,@(cdr names))
     ,desc])
@@ -139,7 +139,7 @@
   (unless (regexp-match-peek #rx"^[[]" in)
     (complain src in "expected a square bracket to start a list of things for a place"))
   (read-char in)
-  (define-values (things _) 
+  (define-values (things _)
     (if (regexp-match-peek #rx"^[]]" in)
         (values null #f)
         (read-name-sequence src in #f)))

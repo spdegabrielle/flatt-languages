@@ -58,15 +58,15 @@ load
 
 ===EVERYWHERE===
 
-quit 
+quit
  (begin
   (printf "Bye!\n")
   (exit))
 
-look 
+look
  (show-current-place)
 
-inventory 
+inventory
  (show-inventory)
 
 save
@@ -86,7 +86,7 @@ get
   "Ouch!"
 
 ---door---
-open 
+open
   (if (have-thing? key)
       (begin
         (set-thing-state! door 'open)
@@ -142,7 +142,7 @@ south
 "You are standing in front of a house."
 [door]
 
-in 
+in
   (if (eq? (thing-state door) 'open)
       room
       "The door is not open.")

@@ -47,17 +47,17 @@
      (define id (verb (list 'id) (symbol->string 'id) #t))]))
 
 
-(define-syntax-rule (define-thing id 
+(define-syntax-rule (define-thing id
                       [vrb expr] ...)
   (begin
-    (define id 
+    (define id
       (thing 'id #f (list (cons vrb (lambda () expr)) ...)))
     (record-element! 'id id)))
 
 
-(define-syntax-rule (define-place id 
-                      desc 
-                      (thng ...) 
+(define-syntax-rule (define-place id
+                      desc
+                      (thng ...)
                       ([vrb expr] ...))
   (begin
     (define id (place desc
@@ -75,7 +75,7 @@
 ;; Verbs ----------------------------------------
 ;; Declare all the verbs that can be used in the game.
 ;; Each verb has a canonical name, a `_' if it needs
-;; a thing (i.e., a transitive verb), a set of aliases, 
+;; a thing (i.e., a transitive verb), a set of aliases,
 ;; and a printed form.
 
 (define-verbs all-verbs
@@ -86,7 +86,7 @@
   [up (=) "go up"]
   [down (=) "go down"]
   [in (= enter) "enter"]
-  [out (= leave) "leave"]  
+  [out (= leave) "leave"]
   [get _ (= grab take) "take"]
   [put _ (= drop leave) "drop"]
   [open _ (= unlock) "open"]
@@ -186,10 +186,10 @@
 ;; Fuctions to be used by verb responses:
 (define (have-thing? t)
   (memq t stuff))
-(define (take-thing! t) 
+(define (take-thing! t)
   (set-place-things! current-place (remq t (place-things current-place)))
   (set! stuff (cons t stuff)))
-(define (drop-thing! t) 
+(define (drop-thing! t)
   (set-place-things! current-place (cons t (place-things current-place)))
   (set! stuff (remq t stuff)))
 
@@ -245,10 +245,10 @@
   (or
    (find-verb cmd (place-actions current-place))
    (find-verb cmd everywhere-actions)
-   (using-verb 
+   (using-verb
     cmd all-verbs
     (lambda (verb)
-      (lambda () 
+      (lambda ()
         (if (verb-transitive? verb)
             (format "~a what?" (string-titlecase (verb-desc verb)))
             (format "Can't ~a here." (verb-desc verb))))))
@@ -257,10 +257,10 @@
 
 ;; Handle a transitive-verb command:
 (define (handle-transitive-verb cmd obj)
-  (or (using-verb 
+  (or (using-verb
        cmd all-verbs
        (lambda (verb)
-         (and 
+         (and
           (verb-transitive? verb)
           (cond
             [(ormap (lambda (thing)
@@ -275,7 +275,7 @@
                                 (verb-desc verb) obj))))]
             [else
              (lambda ()
-               (format "There's no ~a here to ~a." obj 
+               (format "There's no ~a here to ~a." obj
                        (verb-desc verb)))]))))
       (lambda ()
         (format "I don't know how to ~a ~a." cmd obj))))
