@@ -30,7 +30,7 @@
 
 ;; Verbs ----------------------------------------
 ;; Declare all the verbs that can be used in the game.
-;; Each verb has a canonical name, a set of aliases, 
+;; Each verb has a canonical name, a set of aliases,
 ;; a printed form, and a boolean indincating whether it
 ;; is transitive.
 
@@ -112,8 +112,8 @@
 ;; Each thing handles a set of transitive verbs.
 
 (define cactus
-  (thing 'cactus 
-         #f 
+  (thing 'cactus
+         #f
          (list (cons get (lambda () "Ouch!")))))
 (record-element! 'cactus cactus)
 
@@ -121,19 +121,19 @@
   (thing 'door
          #f
          (list
-          (cons open 
+          (cons open
                 (lambda ()
                   (if (have-thing? key)
                       (begin
                         (set-thing-state! door 'open)
                         "The door is now unlocked and open.")
                       "The door is locked.")))
-          (cons close 
+          (cons close
                 (lambda ()
                   (begin
                     (set-thing-state! door #f)
                     "The door is now closed.")))
-          (cons knock 
+          (cons knock
                 (lambda ()
                   "No one is home.")))))
 (record-element! 'door door)
@@ -142,14 +142,14 @@
   (thing 'key
          #f
          (list
-          (cons get 
+          (cons get
                 (lambda ()
                   (if (have-thing? key)
                       "You already have the key."
                       (begin
                         (take-thing! key)
                         "You now have the key."))))
-          (cons put 
+          (cons put
                 (lambda ()
                   (if (have-thing? key)
                       (begin
@@ -162,7 +162,7 @@
   (thing 'trophy
          #f
          (list
-          (cons get 
+          (cons get
                 (lambda ()
                   (begin
                     (take-thing! trophy)
@@ -177,9 +177,9 @@
    "You're standing in a meadow. There is a house to the north."
    (list)
    (list
-    (cons north 
+    (cons north
           (lambda () house-front))
-    (cons south 
+    (cons south
           (lambda () desert)))))
 (record-element! 'meadow meadow)
 
@@ -188,7 +188,7 @@
    "You are standing in front of a house."
    (list door)
    (list
-    (cons in 
+    (cons in
           (lambda ()
             (if (eq? (thing-state door) 'open)
                 room
@@ -226,10 +226,10 @@
 ;; Fuctions to be used by verb responses:
 (define (have-thing? t)
   (memq t stuff))
-(define (take-thing! t) 
+(define (take-thing! t)
   (set-place-things! current-place (remq t (place-things current-place)))
   (set! stuff (cons t stuff)))
-(define (drop-thing! t) 
+(define (drop-thing! t)
   (set-place-things! current-place (cons t (place-things current-place)))
   (set! stuff (remq t stuff)))
 
@@ -261,34 +261,34 @@
              (andmap symbol? input)
              (<= 1 (length input) 2))
         (let ([cmd (car input)])
-            (let ([response
-                   (cond
-                    [(= 2 (length input))
-                     (handle-transitive-verb cmd (cadr input))]
-                    [(= 1 (length input))
-                     (handle-intransitive-verb cmd)])])
-              (let ([result (response)])
-                (cond
-                 [(place? result)
-                  (set! current-place result)
-                  (do-place)]
-                 [(string? result)
-                  (printf "~a\n" result)
-                  (do-verb)]
-                 [else (do-verb)]))))
-          (begin
-            (printf "I don't undertand what you mean.\n")
-            (do-verb)))))
+          (let ([response
+                 (cond
+                   [(= 2 (length input))
+                    (handle-transitive-verb cmd (cadr input))]
+                   [(= 1 (length input))
+                    (handle-intransitive-verb cmd)])])
+            (let ([result (response)])
+              (cond
+                [(place? result)
+                 (set! current-place result)
+                 (do-place)]
+                [(string? result)
+                 (printf "~a\n" result)
+                 (do-verb)]
+                [else (do-verb)]))))
+        (begin
+          (printf "I don't undertand what you mean.\n")
+          (do-verb)))))
 
 ;; Handle an intransitive-verb command:
 (define (handle-intransitive-verb cmd)
   (or
    (find-verb cmd (place-actions current-place))
    (find-verb cmd everywhere-actions)
-   (using-verb 
+   (using-verb
     cmd all-verbs
     (lambda (verb)
-      (lambda () 
+      (lambda ()
         (if (verb-transitive? verb)
             (format "~a what?" (string-titlecase (verb-desc verb)))
             (format "Can't ~a here." (verb-desc verb))))))
@@ -297,26 +297,26 @@
 
 ;; Handle a transitive-verb command:
 (define (handle-transitive-verb cmd obj)
-  (or (using-verb 
+  (or (using-verb
        cmd all-verbs
        (lambda (verb)
-         (and 
+         (and
           (verb-transitive? verb)
           (cond
-           [(ormap (lambda (thing)
-                     (and (eq? (thing-name thing) obj)
-                          thing))
-                   (append (place-things current-place)
-                           stuff))
-            => (lambda (thing)
-                 (or (find-verb cmd (thing-actions thing))
-                     (lambda ()
-                       (format "Don't know how to ~a ~a."
-                               (verb-desc verb) obj))))]
-           [else
-            (lambda ()
-              (format "There's no ~a here to ~a." obj 
-                      (verb-desc verb)))]))))
+            [(ormap (lambda (thing)
+                      (and (eq? (thing-name thing) obj)
+                           thing))
+                    (append (place-things current-place)
+                            stuff))
+             => (lambda (thing)
+                  (or (find-verb cmd (thing-actions thing))
+                      (lambda ()
+                        (format "Don't know how to ~a ~a."
+                                (verb-desc verb) obj))))]
+            [else
+             (lambda ()
+               (format "There's no ~a here to ~a." obj
+                       (verb-desc verb)))]))))
       (lambda ()
         (format "I don't know how to ~a ~a." cmd obj))))
 
@@ -372,36 +372,36 @@
 ;; Save the current game state:
 (define (save-game)
   (with-filename
-   (lambda (v)
-     (with-output-to-file v
-       (lambda ()
-         (write
-          (list
-           (map element->name stuff)
-           (element->name current-place)
-           (hash-map names
-                     (lambda (k v)
-                       (cons k
-                             (cond
-                              [(place? v) (map element->name (place-things v))]
-                              [(thing? v) (thing-state v)]
-                              [else #f])))))))))))
+      (lambda (v)
+        (with-output-to-file v
+          (lambda ()
+            (write
+             (list
+              (map element->name stuff)
+              (element->name current-place)
+              (hash-map names
+                        (lambda (k v)
+                          (cons k
+                                (cond
+                                  [(place? v) (map element->name (place-things v))]
+                                  [(thing? v) (thing-state v)]
+                                  [else #f])))))))))))
 
 ;; Restore a game state:
 (define (load-game)
   (with-filename
-   (lambda (v)
-     (let ([v (with-input-from-file v read)])
-       (set! stuff (map name->element (car v)))
-       (set! current-place (name->element (cadr v)))
-       (for-each
-        (lambda (p)
-          (let ([v (name->element (car p))]
-                [state (cdr p)])
-            (cond
-             [(place? v) (set-place-things! v (map name->element state))]
-             [(thing? v) (set-thing-state! v state)])))
-        (caddr v))))))
+      (lambda (v)
+        (let ([v (with-input-from-file v read)])
+          (set! stuff (map name->element (car v)))
+          (set! current-place (name->element (cadr v)))
+          (for-each
+           (lambda (p)
+             (let ([v (name->element (car p))]
+                   [state (cdr p)])
+               (cond
+                 [(place? v) (set-place-things! v (map name->element state))]
+                 [(thing? v) (set-thing-state! v state)])))
+           (caddr v))))))
 
 ;; ============================================================
 ;; Go!

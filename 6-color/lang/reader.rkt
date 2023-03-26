@@ -1,7 +1,9 @@
 #lang racket
 (require syntax/readerr)
 
-(provide (rename-out [txtadv-read-syntax read-syntax]))
+(provide (rename-out [txtadv-read-syntax read-syntax])
+         ;; added at the end to link syntax to colorer:
+         get-info)
 
 (define (txtadv-read-syntax src in)
   (expect-section src in "VERBS")
@@ -146,3 +148,13 @@
   (read-char in)
   (define actions (in-defn src in read-action))
   `(define-place ,name ,desc ,things ,actions))
+
+;; DrRacket asks `get-info' for a 'color-lexer module:
+(require racket/runtime-path)
+(define-runtime-path color-lexer-path "color.rkt")
+(define (get-info in mod line col pos)
+  (lambda (key default)
+    (case key
+      [(color-lexer)
+       (dynamic-require color-lexer-path 'color-lexer)]
+      [else default])))

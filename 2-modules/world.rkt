@@ -4,7 +4,7 @@
 ;; Verbs ----------------------------------------
 ;; Declare all the verbs that can be used in the game.
 ;; Each verb has a canonical name, a `_' if it needs
-;; an object (i.e., a transitive verb), a set of aliases, 
+;; an object (i.e., a transitive verb), a set of aliases,
 ;; and a printed form.
 
 (define-verbs all-verbs
@@ -15,7 +15,7 @@
   [up (=) "go up"]
   [down (=) "go down"]
   [in (= enter) "enter"]
-  [out (= leave) "leave"]  
+  [out (= leave) "leave"]
   [get _ (= grab take) "take"]
   [put _ (= drop leave) "drop"]
   [open _ (= unlock) "open"]
@@ -92,7 +92,7 @@
 
 (define-place desert
   "You're in a desert. There is nothing for miles around."
-  [cactus key
+  [cactus key]
   ([north meadow]
    [south desert]
    [east desert]

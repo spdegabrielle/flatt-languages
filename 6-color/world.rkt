@@ -1,4 +1,4 @@
-#lang reader "txtadv-reader.rkt"
+#lang txtadv
 
 ===VERBS===
 
